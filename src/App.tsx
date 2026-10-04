@@ -104,10 +104,6 @@ function HomeScreen({ saved, onNewGame, onContinue }: { saved: Game | null; onNe
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
-  return <div className="stat"><strong>{value}</strong><span>{label}</span></div>;
-}
-
 function SetupScreen({ game, dispatch, onHome }: { game: Game; dispatch: React.Dispatch<Parameters<typeof gameReducer>[1]>; onHome: () => void }) {
   const validNames = game.players.every((player) => player.name.trim());
   const filledNames = game.players.map((player) => player.name.trim().toLocaleLowerCase()).filter(Boolean);
