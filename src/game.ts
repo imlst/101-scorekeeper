@@ -1,19 +1,18 @@
-import type { Game, GameAction, Player } from './types';
+import type { Game, GameAction, Player, ScoreEvent } from './types';
+import { AVATAR_OPTIONS } from './avatars';
 
 export const STORAGE_KEY = 'scorekeeper-101-game-v1';
 const now = () => new Date().toISOString();
 const newId = () => crypto.randomUUID();
+const defaultAvatar = (index: number) => AVATAR_OPTIONS[index % AVATAR_OPTIONS.length];
 
-export function createGame(): Game {
+export function createGame(playerNames: string[] = [], avatarIds?: string[]): Game {
   const timestamp = now();
   return {
     schemaVersion: 1,
     id: newId(),
     status: 'setup',
-    players: [
-      { id: newId(), name: '', score: 0 },
-      { id: newId(), name: '', score: 0 },
-    ],
+    players: (playerNames.length ? playerNames : ['', '']).map((name, index) => ({ id: newId(), name, score: 0, avatarId: avatarIds?.[index] ?? defaultAvatar(index) })),
     events: [],
     loserId: null,
     createdAt: timestamp,
@@ -30,7 +29,7 @@ export function loadGame(): Game | null {
       localStorage.removeItem(STORAGE_KEY);
       return null;
     }
-    return parsed;
+    return normalizeGame(parsed);
   } catch {
     return null;
   }
@@ -56,14 +55,47 @@ function isGame(value: unknown): value is Game {
     && (game.loserId === null || typeof game.loserId === 'string');
 }
 
+function normalizeGame(game: Game): Game {
+  return {
+    ...game,
+    players: game.players.map((player, index) => ({ ...player, avatarId: typeof player.avatarId === 'string' ? player.avatarId : defaultAvatar(index) })),
+  };
+}
+
 function updated(game: Game, changes: Partial<Game>): Game {
   return { ...game, ...changes, updatedAt: now() };
+}
+
+function replayEvents(events: ScoreEvent[], players: Player[]) {
+  const scores = new Map(players.map((player) => [player.id, 0]));
+  let loserId: string | null = null;
+
+  const recalculatedEvents = events.map((event) => {
+    const scoreBefore = scores.get(event.playerId) ?? 0;
+    const rawScore = scoreBefore + event.delta;
+    const reset = rawScore === 101 || rawScore === -101;
+    const scoreAfter = reset ? 0 : rawScore;
+    if (!loserId && (rawScore > 101 || rawScore < -101)) loserId = event.playerId;
+    scores.set(event.playerId, scoreAfter);
+    return { ...event, scoreBefore, rawScore, scoreAfter, reset };
+  });
+
+  return {
+    events: recalculatedEvents,
+    players: players.map((player) => ({ ...player, score: scores.get(player.id) ?? 0 })),
+    status: loserId ? 'finished' as const : 'playing' as const,
+    loserId,
+  };
 }
 
 export function gameReducer(game: Game | null, action: GameAction): Game | null {
   switch (action.type) {
     case 'start-new':
       return createGame();
+    case 'restart-same-players': {
+      if (!game) return game;
+      return { ...createGame(game.players.map((player) => player.name), game.players.map((player) => player.avatarId)), status: 'playing' };
+    }
     case 'resume':
       return game;
     case 'clear':
@@ -75,9 +107,14 @@ export function gameReducer(game: Game | null, action: GameAction): Game | null 
           ? { ...player, name: action.name }
           : player),
       });
+    case 'set-player-avatar':
+      if (!game || game.status !== 'setup') return game;
+      return updated(game, {
+        players: game.players.map((player) => player.id === action.id ? { ...player, avatarId: action.avatarId } : player),
+      });
     case 'add-player': {
       if (!game || game.status !== 'setup' || game.players.length >= 5) return game;
-      const player: Player = { id: newId(), name: '', score: 0 };
+      const player: Player = { id: newId(), name: '', score: 0, avatarId: defaultAvatar(game.players.length) };
       return updated(game, { players: [...game.players, player] });
     }
     case 'remove-player':
@@ -111,6 +148,10 @@ export function gameReducer(game: Game | null, action: GameAction): Game | null 
         players: game.players.map((item) => item.id === player.id ? { ...item, score: scoreAfter } : item),
         events: [...game.events, event],
       });
+    }
+    case 'undo-score': {
+      if (!game || !game.events.some((event) => event.id === action.eventId)) return game;
+      return updated(game, replayEvents(game.events.filter((event) => event.id !== action.eventId), game.players));
     }
     default:
       return game;

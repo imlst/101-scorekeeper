@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       locale={ruRU}
       theme={{
         token: {
-          colorPrimary: '#a7ef80',
+          colorPrimary: '#d2d4d3',
           colorTextLightSolid: '#13271f',
           colorText: '#f4f3e9',
           colorTextHeading: '#13271f',

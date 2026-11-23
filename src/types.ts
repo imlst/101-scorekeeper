@@ -15,6 +15,7 @@ export interface Player {
   id: string;
   name: string;
   score: number;
+  avatarId: string;
 }
 
 export interface Game {
@@ -30,10 +31,13 @@ export interface Game {
 
 export type GameAction =
   | { type: 'start-new' }
+  | { type: 'restart-same-players' }
   | { type: 'resume' }
   | { type: 'set-player-name'; id: string; name: string }
+  | { type: 'set-player-avatar'; id: string; avatarId: string }
   | { type: 'add-player' }
   | { type: 'remove-player'; id: string }
   | { type: 'start-game' }
   | { type: 'add-score'; playerId: string; delta: number }
+  | { type: 'undo-score'; eventId: string }
   | { type: 'clear' };
