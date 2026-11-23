@@ -4,7 +4,6 @@ body { margin: 0; min-width: 320px; min-height: 100vh; background: radial-gradie
 button, input { font: inherit; }
 button { cursor: pointer; }
 .ant-btn, .ant-input { border-radius: 7px !important; }
-.ant-modal-content { border-radius: 12px !important; }
 .app-shell { position: relative; min-height: 100vh; overflow: hidden; isolation: isolate; }
 .ambient { position: absolute; z-index: -1; width: 360px; height: 360px; border-radius: 50%; filter: blur(100px); opacity: .14; pointer-events: none; }
 .ambient-one { top: 190px; left: -210px; background: #9da2a6; }
@@ -61,6 +60,11 @@ h1, h2 { margin: 14px 0 0; font-family: Manrope, sans-serif; letter-spacing: -1.
 .avatar-picker-button { padding: 0; border: 1px solid transparent; cursor: pointer; }
 .avatar-picker-button:hover { border-color: #f1f1ef; }
 .avatar-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.avatar-dialog { width: min(100%, 410px); padding: 24px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 12px; background: #292b2f; box-shadow: 0 22px 70px rgba(0, 0, 0, .42); }
+.avatar-dialog-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.avatar-dialog-header h2 { margin: 0; color: #f1f1ef; font-size: 21px; letter-spacing: -.6px; }
+.avatar-dialog-header .ant-btn { color: #c8cbca; font-size: 23px; line-height: 1; }
+.avatar-dialog-header .ant-btn:hover { color: #fff !important; background: rgba(255, 255, 255, .08) !important; }
 .avatar-option { width: 100%; aspect-ratio: 1; padding: 3px; overflow: hidden; border: 2px solid transparent; border-radius: 10px; background: #555a5d; cursor: pointer; }
 .avatar-option:hover, .avatar-option.is-selected { border-color: #d2d4d3; background: #707679; }
 .setup-row .ant-input, .score-input-row .ant-input { background: #1b1d20; border-color: rgba(255, 255, 255, .16); color: #f1f1ef; }
@@ -148,10 +152,6 @@ h1, h2 { margin: 14px 0 0; font-family: Manrope, sans-serif; letter-spacing: -1.
 .timeline-undo-button.ant-btn { margin-left: 2px; transform: scale(.8); }
 .timeline-reset { color: #d7f2b7; background: rgba(167, 239, 128, .13); }
 .result-secondary { color: #e5ede4; background: rgba(245, 250, 240, .06); border-color: rgba(245, 250, 240, .15); }
-.ant-modal-content, .ant-modal-header { color: #f1f1ef !important; background: #292b2f !important; }
-.ant-modal-title { color: #f4f3e9 !important; }
-.ant-modal .ant-modal-content { border: 1px solid rgba(230, 244, 233, .14); }
-.ant-modal p { color: #b4c0b6; }
 .confirm-dialog-backdrop { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0, 0, 0, .55); }
 .confirm-dialog { width: min(100%, 420px); padding: 24px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 12px; background: #292b2f; box-shadow: 0 22px 70px rgba(0, 0, 0, .42); }
 .confirm-dialog h2 { margin: 0; color: #f1f1ef; font-size: 21px; letter-spacing: -.6px; }

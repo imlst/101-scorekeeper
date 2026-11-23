@@ -11,7 +11,7 @@ import {
   UndoOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Input, Modal, Tag } from 'antd';
+import { Alert, Button, Input, Tag } from 'antd';
 import { gameReducer, loadGame, saveGame } from './game';
 import { AVATAR_OPTIONS } from './avatars';
 import type { Game, Player, ScoreEvent } from './types';
@@ -182,30 +182,32 @@ function SetupScreen({ game, dispatch, onHome }: { game: Game; dispatch: React.D
         <Button type="primary" size="large" block disabled={!validNames || !uniqueNames} icon={<CheckOutlined />} onClick={() => dispatch({ type: 'start-game' })}>Начать партию</Button>
       </div>
       <p className="helper-text">От 2 до 5 игроков. Имена и счет партии сохраняются автоматически.</p>
-      <Modal
-        open={avatarPickerPlayer !== null}
-        title="Выберите аватар"
-        footer={null}
-        centered
-        onCancel={() => setAvatarPickerPlayer(null)}
-      >
-        <div className="avatar-options">
-          {AVATAR_OPTIONS.map((avatarId) => (
-            <button
-              type="button"
-              key={avatarId}
-              className={`avatar-option ${avatarPickerPlayer?.avatarId === avatarId ? 'is-selected' : ''}`}
-              onClick={() => {
-                if (avatarPickerPlayer) dispatch({ type: 'set-player-avatar', id: avatarPickerPlayer.id, avatarId });
-                setAvatarPickerPlayer(null);
-              }}
-              aria-label={`Выбрать аватар ${avatarId}`}
-            >
-              <PixelAvatar avatarId={avatarId} label="" />
-            </button>
-          ))}
+      {avatarPickerPlayer && (
+        <div className="confirm-dialog-backdrop" role="presentation" onMouseDown={() => setAvatarPickerPlayer(null)}>
+          <section className="avatar-dialog" role="dialog" aria-modal="true" aria-labelledby="avatar-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="avatar-dialog-header">
+              <h2 id="avatar-dialog-title">Выберите аватар</h2>
+              <Button type="text" onClick={() => setAvatarPickerPlayer(null)} aria-label="Закрыть выбор аватара">×</Button>
+            </div>
+            <div className="avatar-options">
+              {AVATAR_OPTIONS.map((avatarId) => (
+                <button
+                  type="button"
+                  key={avatarId}
+                  className={`avatar-option ${avatarPickerPlayer.avatarId === avatarId ? 'is-selected' : ''}`}
+                  onClick={() => {
+                    dispatch({ type: 'set-player-avatar', id: avatarPickerPlayer.id, avatarId });
+                    setAvatarPickerPlayer(null);
+                  }}
+                  aria-label={`Выбрать аватар ${avatarId}`}
+                >
+                  <PixelAvatar avatarId={avatarId} label="" />
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
-      </Modal>
+      )}
     </section>
   );
 }
