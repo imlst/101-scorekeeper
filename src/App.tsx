@@ -89,19 +89,18 @@ function App() {
 
       <p className="save-note">Вы всегда можете закрыть страницу — данные сохраняются на устройстве.</p>
 
-      <Modal
-        open={dialogOpen}
-        title="Начать новую партию?"
-        okText="Начать новую игру"
-        cancelText="Отмена"
-        okButtonProps={{ className: 'new-game-confirm-button' }}
-        cancelButtonProps={{ className: 'new-game-cancel-button' }}
-        onOk={confirmNew}
-        onCancel={() => setDialogOpen(false)}
-        centered
-      >
-        <p>Текущая партия и ее история будут заменены.</p>
-      </Modal>
+      {dialogOpen && (
+        <div className="confirm-dialog-backdrop" role="presentation" onMouseDown={() => setDialogOpen(false)}>
+          <section className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="new-game-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
+            <h2 id="new-game-dialog-title">Начать новую партию?</h2>
+            <p>Текущая партия и ее история будут заменены.</p>
+            <div className="confirm-dialog-actions">
+              <Button onClick={() => setDialogOpen(false)}>Отмена</Button>
+              <Button type="primary" onClick={confirmNew}>Начать новую игру</Button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

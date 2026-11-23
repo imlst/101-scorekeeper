@@ -152,8 +152,13 @@ h1, h2 { margin: 14px 0 0; font-family: Manrope, sans-serif; letter-spacing: -1.
 .ant-modal-title { color: #f4f3e9 !important; }
 .ant-modal .ant-modal-content { border: 1px solid rgba(230, 244, 233, .14); }
 .ant-modal p { color: #b4c0b6; }
-.ant-modal .new-game-confirm-button, .ant-modal .new-game-cancel-button { color: #202124 !important; border-color: #e6e7e4 !important; background: #e6e7e4 !important; box-shadow: none !important; }
-.ant-modal .new-game-confirm-button:hover, .ant-modal .new-game-cancel-button:hover { color: #151618 !important; border-color: #fff !important; background: #fff !important; }
+.confirm-dialog-backdrop { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0, 0, 0, .55); }
+.confirm-dialog { width: min(100%, 420px); padding: 24px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 12px; background: #292b2f; box-shadow: 0 22px 70px rgba(0, 0, 0, .42); }
+.confirm-dialog h2 { margin: 0; color: #f1f1ef; font-size: 21px; letter-spacing: -.6px; }
+.confirm-dialog p { margin: 11px 0 22px; color: #b4b7b8; font-size: 14px; }
+.confirm-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.confirm-dialog-actions .ant-btn { color: #202124; border-color: #e6e7e4; background: #e6e7e4; box-shadow: none; }
+.confirm-dialog-actions .ant-btn:hover { color: #151618 !important; border-color: #fff !important; background: #fff !important; }
 
 @media (max-width: 720px) {
   .page-width { width: min(100% - 36px, 550px); }
