@@ -11,7 +11,7 @@ import {
   UndoOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Input, Tag } from 'antd';
+import { Alert, Button, Input } from 'antd';
 import { gameReducer, loadGame, saveGame } from './game';
 import { AVATAR_OPTIONS } from './avatars';
 import type { Game, Player, ScoreEvent } from './types';
@@ -181,7 +181,6 @@ function SetupScreen({ game, dispatch, onHome }: { game: Game; dispatch: React.D
         {!uniqueNames && <Alert type="warning" showIcon message="Имена игроков должны отличаться" />}
         <Button type="primary" size="large" block disabled={!validNames || !uniqueNames} icon={<CheckOutlined />} onClick={() => dispatch({ type: 'start-game' })}>Начать партию</Button>
       </div>
-      <p className="helper-text">От 2 до 5 игроков. Имена и счет партии сохраняются автоматически.</p>
       {avatarPickerPlayer && (
         <div className="confirm-dialog-backdrop" role="presentation" onMouseDown={() => setAvatarPickerPlayer(null)}>
           <section className="avatar-dialog" role="dialog" aria-modal="true" aria-labelledby="avatar-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
@@ -221,11 +220,10 @@ function PlayingScreen({ game, dispatch, onHome }: { game: Game; dispatch: React
       </div>
       {latestEvent?.reset && <Alert className="game-alert" type="success" showIcon message={`${nameOf(game.players, latestEvent.playerId)} дошел до ${latestEvent.rawScore} очков – счет обнулен.`} />}
       <div className="score-grid">
-        {game.players.map((player, index) => (
+        {game.players.map((player) => (
           <PlayerCard
             key={player.id}
             player={player}
-            index={index}
             events={game.events.filter((event) => event.playerId === player.id)}
             disabled={game.status !== 'playing'}
             onAdd={(delta) => dispatch({ type: 'add-score', playerId: player.id, delta })}
@@ -237,7 +235,7 @@ function PlayingScreen({ game, dispatch, onHome }: { game: Game; dispatch: React
   );
 }
 
-function PlayerCard({ player, index, events, disabled, onAdd, onUndo }: { player: Player; index: number; events: ScoreEvent[]; disabled: boolean; onAdd: (delta: number) => void; onUndo: (eventId: string) => void }) {
+function PlayerCard({ player, events, disabled, onAdd, onUndo }: { player: Player; events: ScoreEvent[]; disabled: boolean; onAdd: (delta: number) => void; onUndo: (eventId: string) => void }) {
   const [delta, setDelta] = useState('');
   const [error, setError] = useState('');
   const historyRef = useRef<HTMLUListElement>(null);
@@ -259,7 +257,6 @@ function PlayerCard({ player, index, events, disabled, onAdd, onUndo }: { player
       <div className="player-card-head">
         <span className="player-avatar"><PixelAvatar avatarId={player.avatarId} label={`Аватар игрока ${player.name}`} /></span>
         <strong>{player.name}</strong>
-        <Tag bordered={false} className="round-tag">Игрок {index + 1}</Tag>
       </div>
       <div className={`score-value ${Math.abs(player.score) >= 80 ? 'score-warning' : ''}`}>{player.score}<span> очков</span></div>
       <div className="score-meter"><span style={{ width: `${Math.min(Math.abs(player.score), 101) / 101 * 100}%` }} /></div>
